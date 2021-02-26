@@ -7,6 +7,6 @@ localhost ansible_connection=local ansible_host=127.0.0.1 ansible_python_interpr
 ansible_python_interpreter=/usr/bin/python3
 
 
-[dnsserver]
-logxserver1
+[dnsservers]
+dnsserver1
 
