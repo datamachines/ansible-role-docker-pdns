@@ -41,9 +41,9 @@ export VAULT_SKIP_VERIFY=1
 ``````
 
 ## Using the role
-Now you are ready to run the playbook and deploy PowerDNS.  
+Now you are ready to run the playbook and deploy PowerDNS.  define  your host in production file , then
 ```
-ansible-playbook --private-key=key --user=ubuntu --extra-var "project_name=$projectGroup"  -v site.yml  
+ansible-playbook --private-key=key --user=ubuntu   -v site.yml  
 ```
 
 #### Notice: powerdns admin ui is available via http://$ip:8080
