@@ -1,6 +1,7 @@
-#uncomment following, if  you don't have a hash
+#uncomment following and set the real value, if  you don't store sensitive password in hashicorp vault.
 #MYSQL_PASS: changeme
 #PDNS_API_KEY: pdnsapikey
 
+#comment out following if you want to see the password directly in the file
 MYSQL_PASS: "{{ lookup('hashivault', 'dmc/passwd', 'PDNS_MYSQL_ROOT_PASS') }}"
 PDNS_API_KEY: "{{ lookup('hashivault', 'dmc/passwd', 'PDNS_API_KEY') }}"
