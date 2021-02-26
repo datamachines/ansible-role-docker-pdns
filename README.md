@@ -26,7 +26,7 @@ ansible-galaxy --ignore-certs install -r install_roles.yml to install role files
 
 
 * #### Setup environment variable for Hashcorp Vault lookup
-  ##### note if don't want to use vault to store you password, you could skip this step, and simply change `lookup_vault` in group_var/all.yml to false
+  ##### note if don't want to use vault to store you password, you could skip this step, and simply comment out lookup  in group_var/all.yml and value in the file
 
 
   Source the following environment to configure your environment for the connectivity information used by the 
