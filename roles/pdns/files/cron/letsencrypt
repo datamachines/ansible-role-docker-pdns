@@ -1,0 +1,8 @@
+#!/bin/bash
+/usr/bin/letsencrypt renew
+for domain in /etc/letsencrypt/live/* ; do
+    cp /etc/letsencrypt/live/${domain}/fullchain.pem /etc/nginx/ssl/${domain}.crt
+    cp /etc/letsencrypt/live/${domain}/privkey.pem /etc/nginx/ssl/${domain}.pem
+done
+
+service nginx reload

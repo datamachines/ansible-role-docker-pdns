@@ -1,0 +1,13 @@
+---
+# handlers file for base_ipaserver
+
+- name: restart docker
+  service:
+    name: docker
+    state: restart
+    
+    
+- name: restart nginx
+  service:
+    name: nginx
+    state: restart

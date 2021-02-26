@@ -1,0 +1,6 @@
+#uncomment following, if  you don't have a hash
+#MYSQL_PASS: changeme
+#PDNS_API_KEY: pdnsapikey
+
+MYSQL_PASS: "{{ lookup('hashivault', 'dmc/passwd', 'PDNS_MYSQL_ROOT_PASS') }}"
+PDNS_API_KEY: "{{ lookup('hashivault', 'dmc/passwd', 'PDNS_API_KEY') }}"

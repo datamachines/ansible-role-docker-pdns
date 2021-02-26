@@ -1,0 +1,22 @@
+---
+# file: site.yml
+
+#  to install and deploy medifor base ipa server
+#  ansible-playbook --private-key=private-key.pem   --extra-var "project_name=all" --v site.yml
+
+
+# This playbook deploys proxy mapping tool.
+
+- name: deploy docker pdns to {{ project_name }}
+  become: yes
+  become_user: root
+
+ 
+
+  #deploy to all hosts 
+  hosts: "{{ project_name }}"
+
+  roles:
+
+    - pdns
+

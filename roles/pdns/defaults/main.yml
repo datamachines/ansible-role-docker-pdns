@@ -1,0 +1,42 @@
+---
+# defaults file for powerDns 
+
+docker_group: docker
+
+pdns_root_dir: /opt/pdns
+
+#pdns environment variable
+MYSQL_USER: root
+MYSQL_PASS: changeme
+MYSQL_PORT: 3306
+pdns_docker_image:  psitrax/powerdns
+pdn_config_dir: "{{ pdns_root_dir }}/config/pdns"
+pdns_port: 54
+#assign a ip, so it can be references in pdns-recursor as  forwarder
+pdns_ip: 192.168.96.3
+PDNS_API_KEY: apikey
+PDNS_VERSION: 4.1.1
+
+#pdns recursor environment variable
+pdns_recursor_config_dir: "{{ pdns_root_dir }}/config/pdns-recursor"
+pdns_recursor_config_file: "{{ pdns_recursor_config_dir }}/recursor.conf"
+pdns_recursor_port: 53
+pdns_recursor_image: lmnetworks/pdns-recursor:latest
+pdns_recursor_ip: 192.168.96.4
+
+#db 
+db_image: mariadb:10.1
+db_data_dir: /opt/mysql-data
+db_ip: 192.168.96.2
+
+#pdns admin ui variables
+pdns_admin_uwsgi_image: pschiffe/pdns-admin-uwsgi:ngoduykhanh
+pdns_admin_uwsgi_ip: 192.168.96.5
+pdns_admin_static_image: pschiffe/pdns-admin-static:ngoduykhanh
+pdns_admin_static_ip: 192.168.96.6
+pdns_admin_upload_dir: /opt/pdns-admin-upload
+
+
+#network
+networks_subnet: 192.168.96.0/24
+networks_gateway: 192.168.96.1

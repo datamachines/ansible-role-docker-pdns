@@ -1,0 +1,96 @@
+version: "2"
+services:
+  pdns-master:
+    image:  {{ pdns_docker_image }}
+    ports:
+        - "{{ pdns_port }}:{{ pdns_port }}"
+        - "{{ pdns_port }}:{{ pdns_port }}/udp"
+        - "8081:8081"
+    environment:
+        - MYSQL_USER=$MYSQL_USER
+        - MYSQL_PASS=$MYSQL_PASS
+        - MYSQL_PORT=$MYSQL_PORT
+          
+    volumes:
+        - {{ pdn_config_dir }}:/etc/pdns
+    links:
+        - "db:mysql"
+    restart: always
+    networks:
+       app_net:
+           ipv4_address: {{ pdns_ip }}
+
+           
+  pdns-recursor:
+    image: {{ pdns_recursor_image }}
+    ports:
+        - "{{ pdns_recursor_port }}:{{ pdns_recursor_port }}"
+        - "{{ pdns_recursor_port }}:{{ pdns_recursor_port }}/udp"
+    links:
+        - "pdns-master:pdns"
+    volumes:
+        - {{ pdns_recursor_config_file }}:/etc/pdns/recursor.conf
+    restart: always
+
+    networks:
+        app_net:
+            ipv4_address: {{ pdns_recursor_ip }}
+
+  db:
+    image: {{ db_image }}
+    environment:
+        - MYSQL_ROOT_PASSWORD=$MYSQL_PASS
+    volumes:
+           - {{ db_data_dir }}:/var/lib/mysql
+    restart: always
+    networks:
+        app_net:
+            ipv4_address: {{ db_ip }}
+            aliases:
+               - mysql
+               - db
+  
+  pdns-admin:
+    image:  {{ pdns_admin_uwsgi_image }}
+    restart: always
+
+    networks:
+            app_net:
+                    ipv4_address: {{ pdns_admin_uwsgi_ip }}
+    links:
+       - "db:mysql"
+       - "pdns-master:pdns"
+    volumes:
+         - {{ pdns_admin_upload_dir }}:/opt/powerdns-admin/upload
+    environment:
+         - PDNS_ADMIN_SQLA_DB_HOST='mysql'
+         - PDNS_ADMIN_SQLA_DB_USER='$MYSQL_USER'
+         - PDNS_ADMIN_SQLA_DB_PASSWORD='$MYSQL_PASS'
+         - PDNS_ADMIN_SQLA_DB_NAME='powerdnsadmin'
+         - PDNS_API_KEY=$PDNS_API_KEY
+         - PDNS_VERSION=$PDNS_VERSION
+         
+  pdns-admin-static:
+     image: {{ pdns_admin_static_image }}
+     links:
+        - "pdns-admin:pdns-admin-uwsgi"
+     ports:
+        - "8080:80"
+     restart: always
+
+     networks:
+            app_net:
+                    ipv4_address: {{ pdns_admin_static_ip }}
+                    
+                    
+#setup a network with IP, since pdns-recursor only accept ip as forward zone host. with docker-compose setup
+#this is only way to forward zone to another auth dns server served inside the docker
+networks:
+  app_net:
+    driver: bridge
+    enable_ipv6: false
+    ipam:
+      driver: default
+      config:
+        - subnet: {{ networks_subnet }}
+          gateway: {{ networks_gateway }}

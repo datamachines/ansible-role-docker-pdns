@@ -1,0 +1,12 @@
+
+[all]
+logxserver1 ansible_ssh_host=10.1.90.10 ip=10.1.90.10  ansible_ssh_port=22 ansible_ssh_user=dmcops ansible_become=yes ansible_ssh_private_key_file="/Users/aweng/Documents/keys/dmcops_rsa"
+localhost ansible_connection=local ansible_host=127.0.0.1 ansible_python_interpreter="/Library/Frameworks/Python.framework/Versions/3.7/bin/python3.7"
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+
+
+[dsra]
+logxserver1
+

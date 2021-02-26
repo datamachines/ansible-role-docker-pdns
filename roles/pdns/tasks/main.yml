@@ -1,0 +1,100 @@
+---
+# tasks file for base_ipaserver
+
+- name: include docker task
+  include_tasks: "docker.yml"
+    
+
+- name: install apt packages
+  package: 
+    name: "{{ packages }}"
+    state: present
+    update_cache: yes
+  vars:
+    packages:
+      - python3
+      - python3-pip
+- name: make "{{ pdns_root_dir }}"
+  file:
+      path: "{{ pdns_root_dir }}"
+      state: directory
+      mode: '0755'
+
+- name: make "{{ pdn_config_dir }}"
+  file:
+      path: "{{ pdn_config_dir }}"
+      state: directory
+      mode: '0755'
+
+- name: make "{{ pdns_recursor_config_dir }}"
+  file:
+      path: "{{ pdns_recursor_config_dir }}"
+      state: directory
+      mode: '0755'
+
+- name: make "{{ db_data_dir }}"
+  file:
+      path: "{{ db_data_dir }}"
+      state: directory
+      mode: '0755'
+
+
+
+- name: copy   env.j2 to {{ pdns_root_dir }}/.env
+  template: src=env.j2 dest={{ pdns_root_dir }}/.env
+  tags:
+    - deploy
+
+- name: copy   pdns.conf.j2 to {{ pdn_config_dir }}/pdns.conf
+  template: src=pdns.conf.j2 dest={{ pdn_config_dir }}/pdns.conf
+  tags:
+    - deploy
+
+- name: copy   recursor.conf.j2 to {{ pdns_recursor_config_dir }}/recursor.conf
+  template: src=recursor.conf.j2 dest={{ pdns_recursor_config_dir }}/recursor.conf
+  tags:
+    - deploy
+
+- name: copy   docker-compose.yml.j2 to {{ pdns_root_dir }}/docker-compose.yml
+  template: src=docker-compose.yml.j2 dest={{ pdns_root_dir }}/docker-compose.yml
+  tags:
+    - deploy
+ 
+- name: docker-compose pull first, since we will have to shutdown existing resolved to avoid conflict
+  shell: |
+      /usr/local/bin/docker-compose pull
+      /bin/mv /etc/resolv.conf /etc/resolv.conf.orig
+  args:
+     chdir: "{{ pdns_root_dir }}"
+  tags:
+    - deploy
+
+- name: disable systemd resolved and ensure it is stopped
+  systemd:
+    name: systemd-resolved
+    enabled: no
+    state: stopped
+
+
+- name: docker compose build and up
+  docker_compose:
+     project_src: "{{ pdns_root_dir }}"
+     restarted: true
+  tags:
+      - docker-compose
+      - deploy
+  register: output
+
+- name: show docker compose output
+  debug:
+       var: output
+  tags:
+     - docker-compose
+     - docker
+     - deploy
+
+      
+
+
+          
+   

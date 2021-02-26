@@ -1,0 +1,23 @@
+config-dir=/etc/pdns
+setuid=pdns
+setgid=pdns
+api=yes
+api-key={{ PDNS_API_KEY }}
+
+#master=yes
+webserver=yes
+webserver-address=0.0.0.0
+#allow  from docker
+#webserver-allow-from=172.0.0.0/8
+webserver-allow-from={{ networks_subnet }}
+#webserver-allow-from=0.0.0.0/0
+local-address=0.0.0.0
+local-port={{ pdns_port }}
+launch=
+launch+=gmysql
+gmysql-dbname=pdns
+gmysql-host=mysql
+gmysql-password={{ MYSQL_PASS }}
+gmysql-port={{ MYSQL_PORT }}
+gmysql-user=root
+
