@@ -13,8 +13,8 @@
 
  
 
-  #deploy to all hosts 
-  hosts: "{{ project_name }}"
+  #deploy to dnsserver hosts 
+  hosts: dnsservers
 
   roles:
 
